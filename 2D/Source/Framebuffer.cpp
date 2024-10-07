@@ -76,8 +76,8 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 }
 
 void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color) {
-	int dx = x2 - x1;
-	int dy = y2 - y1;
+	int dx = abs(x2 - x1);
+	int dy = abs(y2 - y1);
 
 	bool steep = std::abs(dy) > std::abs(dx);
 	if (steep) {
@@ -93,6 +93,8 @@ void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 	int error = dx / 2;
 	int ystep = (y1 < y2) ? 1 : -1;
 
+	std::cout << "Sorted points: (" << x1 << "," << y1 << "), (" << x2 << "," << y2 << ")\n";
+
 	for (int x = x1, y = y1; x <= x2; x++) {
 		steep ? DrawPoint(y, x, color) : DrawPoint(x, y, color);
 		error -= dy;
@@ -104,7 +106,57 @@ void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 }
 
 void Framebuffer::DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const color_t& color) {
+	if (x1 > x2) {
+		std::swap(x1, x2);
+		std::swap(y1, y2);
+	}
+	if (x2 > x3) {
+		std::swap(x2, x3);
+		std::swap(y2, y3);
+	}
+	if (x3 > x1) {
+		std::swap(x3, x1);
+		std::swap(y3, y1);
+	}
+
+	std::cout << "Sorted points: (" << x1 << "," << y1 << "), (" << x2 << "," << y2 << "), (" << x3 << "," << y3 << ")\n";
+	
 	DrawLine(x1, y1, x2, y2, color);
 	DrawLine(x2, y2, x3, y3, color);
 	DrawLine(x3, y3, x1, y1, color);
+}
+
+void Framebuffer::DrawCircle(int xc, int yc, int radius, const color_t& color) {
+	int x = 0, y = radius;
+	int d = 3 - 2 * radius;
+	CircleBres(xc, yc, x, y, color);
+	while (y >= x) {
+
+		// check for decision parameter
+		// and correspondingly 
+		// update d, y
+		if (d > 0) {
+			y--;
+			d = d + 4 * (x - y) + 10;
+		}
+		else
+			d = d + 4 * x + 6;
+
+		// Increment x after updating decision parameter
+		x++;
+
+		// Draw the circle using the new coordinates
+		CircleBres(xc, yc, x, y, color);
+	}
+}
+
+void Framebuffer::CircleBres(int xc, int yc, int x, int y, const color_t& color) {
+	DrawPoint(xc + x, yc + y, color);
+	DrawPoint(xc - x, yc + y, color);
+	DrawPoint(xc + x, yc - y, color);
+	DrawPoint(xc - x, yc - y, color);
+	DrawPoint(xc + y, yc + x, color);
+	DrawPoint(xc - y, yc + x, color);
+	DrawPoint(xc + y, yc - x, color);
+	DrawPoint(xc - y, yc - x, color);
 }

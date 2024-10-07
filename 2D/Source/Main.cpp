@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
     renderer.Initialize();
     renderer.CreateWindow("2D", 1000, 1000);
 
-    Framebuffer framebuffer(renderer, 250, 250);
+    Framebuffer framebuffer(renderer, 500, 500);
 
     bool quit = false;
     while (!quit) {
@@ -37,11 +37,12 @@ int main(int argc, char* argv[]) {
             int y2 = rand() % 250;
             int x3 = rand() % 250;
             int y3 = rand() % 250;
-            color_t col = { rand() % 255, rand() % 255, rand() % 255, 255 };
-            framebuffer.DrawPoint(x, y, { 255, 255, 255, 255 });
-            framebuffer.DrawRect(100, 100, 10, 10, col);
-            //framebuffer.DrawLine(x, y, x2, y2, col);
-            //framebuffer.DrawTriangle(100, 100, 100, 200, 200, 150, col);
+            color_t col = { (Uint8)(rand() % 255), (Uint8)(rand() % 255), (Uint8)(rand() % 255), 255 };
+            //framebuffer.DrawPoint(x, y, { 255, 255, 255, 255 });
+            //framebuffer.DrawRect(100, 100, 10, 10, col);
+            framebuffer.DrawLine(0, 0, 100, 100, col);
+            framebuffer.DrawCircle(100, 200, 50, col);
+            framebuffer.DrawTriangle(200, 200, 300, 100, 400, 200, col);
         }
 
         framebuffer.Update();
