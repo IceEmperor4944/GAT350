@@ -49,13 +49,13 @@ int main(int argc, char* argv[]) {
             //framebuffer.DrawLine(0, 0, 100, 100, col);
             //framebuffer.DrawCircle(100, 200, 50, col);
             //framebuffer.DrawTriangle(200, 200, 300, 100, 400, 200, col);
-            framebuffer.DrawImage(x, y, image);
+            //framebuffer.DrawImage(x, y, image);
         }
 
         int mx, my;
         SDL_GetMouseState(&mx, &my);
 
-        //framebuffer.DrawImage(100, 300, 800, 400, image);
+        framebuffer.DrawImage(100, 300, 800, 400, image);
         //framebuffer.DrawLinearCurve(100, 100, 200, 200, { 255, 255, 255, 255 });
         //framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, 10, { 255, 255, 255, 255 });
         //framebuffer.DrawCubicCurve(300, 700, 700, 700, mx, my, 600, 400, 10, { 255, 255, 255, 255 });
@@ -67,9 +67,17 @@ int main(int argc, char* argv[]) {
         //CubicPoint(300, 700, 700, 700, mx, my, 600, 400, t, x, y);
         //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
 
-        //PostProcess::Invert(framebuffer.m_buffer);
-        //PostProcess::Monochrome(framebuffer.m_buffer);
-        //PostProcess::Brightness(framebuffer.m_buffer, 20);
+        PostProcess::Invert(framebuffer.m_buffer);
+        PostProcess::Monochrome(framebuffer.m_buffer);
+        PostProcess::Brightness(framebuffer.m_buffer, 20);
+        PostProcess::ColorBalance(framebuffer.m_buffer, 100, 100, -10);
+        PostProcess::Noise(framebuffer.m_buffer, 10);
+        PostProcess::Threshold(framebuffer.m_buffer, 150);
+        PostProcess::Posterize(framebuffer.m_buffer, 10);
+        //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 128);
         framebuffer.Update();
 
         renderer = framebuffer;
