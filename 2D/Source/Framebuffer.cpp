@@ -2,6 +2,7 @@
 #include "Image.h"
 #include "MathUtils.h"
 #include "Renderer.h"
+#include "Color.h"
 #include <iostream>
 
 Framebuffer::Framebuffer(const Renderer& renderer, int width, int height) {
@@ -29,9 +30,15 @@ void Framebuffer::Clear(const color_t& color) {
 }
 
 void Framebuffer::DrawPoint(int x, int y, const color_t& color) {
+	color_t& dest = m_buffer[x + y * m_width];
+	dest = ColorBlend(color, dest);
+}
+
+void Framebuffer::DrawPointClip(int x, int y, const color_t& color) {
 	if (x < 0 || x >= m_width || y < 0 || y >= m_height) return;
-	
-	m_buffer[x + y * m_width] = color;
+
+	color_t& dest = m_buffer[x + y * m_width];
+	dest = ColorBlend(color, dest);
 }
 
 void Framebuffer::DrawRect(int x, int y, int w, int h, const color_t& color){
@@ -227,7 +234,9 @@ void Framebuffer::DrawImage(int x, int y, const Image& image) {
 			// check alpha, if 0 don't draw
 			if (color.a == 0) continue;
 			// set buffer to color
-			m_buffer[sx + sy * m_width] = color;
+			DrawPoint(sx, sy, color);
+
+			//m_buffer[sx + sy * m_width] = color;
 		}
 	}
 }

@@ -3,6 +3,7 @@
 #include "Image.h"
 #include "PostProcess.h"
 #include "MathUtils.h"
+#include "Color.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -18,6 +19,10 @@ int main(int argc, char* argv[]) {
     Image image;
     image.Load("bridge.jpg");
 
+    Image imageAlpha;
+    imageAlpha.Load("colors.png");
+    PostProcess::Alpha(imageAlpha.m_buffer, 128);
+
     bool quit = false;
     while (!quit) {
         SDL_Event event;
@@ -29,10 +34,6 @@ int main(int argc, char* argv[]) {
                 quit = true;
             }
         }
-
-        // clear screen
-        //SDL_SetRenderDrawColor(renderer.m_renderer, 0, 0, 0, 0);
-        //SDL_RenderClear(renderer.m_renderer);
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
 
@@ -55,7 +56,6 @@ int main(int argc, char* argv[]) {
         int mx, my;
         SDL_GetMouseState(&mx, &my);
 
-        framebuffer.DrawImage(100, 300, 800, 400, image);
         //framebuffer.DrawLinearCurve(100, 100, 200, 200, { 255, 255, 255, 255 });
         //framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, 10, { 255, 255, 255, 255 });
         //framebuffer.DrawCubicCurve(300, 700, 700, 700, mx, my, 600, 400, 10, { 255, 255, 255, 255 });
@@ -66,18 +66,24 @@ int main(int argc, char* argv[]) {
         //int x, y;
         //CubicPoint(300, 700, 700, 700, mx, my, 600, 400, t, x, y);
         //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
+        
+        SetBlendMode(BlendMode::NORMAL);
+        framebuffer.DrawImage(100, 300, image);
+        SetBlendMode(BlendMode::ADDITIVE);
+        framebuffer.DrawImage(mx - 100, my - 100, imageAlpha);
 
-        PostProcess::Invert(framebuffer.m_buffer);
-        PostProcess::Monochrome(framebuffer.m_buffer);
-        PostProcess::Brightness(framebuffer.m_buffer, 20);
-        PostProcess::ColorBalance(framebuffer.m_buffer, 100, 100, -10);
-        PostProcess::Noise(framebuffer.m_buffer, 10);
-        PostProcess::Threshold(framebuffer.m_buffer, 150);
-        PostProcess::Posterize(framebuffer.m_buffer, 10);
+        //PostProcess::Invert(framebuffer.m_buffer);
+        //PostProcess::Monochrome(framebuffer.m_buffer);
+        //PostProcess::Brightness(framebuffer.m_buffer, 20);
+        //PostProcess::ColorBalance(framebuffer.m_buffer, 100, 100, -10);
+        //PostProcess::Noise(framebuffer.m_buffer, 10);
+        //PostProcess::Threshold(framebuffer.m_buffer, 150);
+        //PostProcess::Posterize(framebuffer.m_buffer, 10);
         //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 128);
+        //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         framebuffer.Update();
 
         renderer = framebuffer;

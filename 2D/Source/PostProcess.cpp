@@ -76,6 +76,12 @@ namespace PostProcess {
 			});
 	}
 
+	void Alpha(std::vector<color_t>& buffer, uint8_t alpha) {
+		std::for_each(buffer.begin(), buffer.end(), [&](auto& color) {
+			color.a = alpha;
+			});
+	}
+
 	void BoxBlur(std::vector<color_t>& buffer, int w, int h) {
 		std::vector<color_t> source = buffer;
 		int k[3][3] = {
@@ -224,6 +230,42 @@ namespace PostProcess {
 			color.r = c;
 			color.g = c;
 			color.b = c;
+		}
+	}
+
+	void Emboss(std::vector<color_t>& buffer, int w, int h) {
+		std::vector<color_t> source = buffer;
+		int k[3][3] = {
+			{1, 0, 0},
+			{0, 0, 0},
+			{0, 0,-1}
+		};
+
+		for (int i = 0; i < buffer.size(); i++) {
+			int x = i % w;
+			int y = i / w;
+
+			if (x < 1 || x + 1 >= w || y < 1 || y + 1 >= h) continue;
+
+			int r = 0;
+			int g = 0;
+			int b = 0;
+
+			for (int iy = 0; iy < 3; iy++) {
+				for (int ix = 0; ix < 3; ix++) {
+					color_t pixel = source[(x + ix - 1) + (y + iy - 1) * w];
+					int weight = k[iy][ix];
+
+					r += pixel.r * weight;
+					g += pixel.g * weight;
+					b += pixel.b * weight;
+				}
+			}
+
+			color_t& color = buffer[i];
+			color.r = static_cast<uint8_t>(std::clamp(r + 128, 0, 255));
+			color.g = static_cast<uint8_t>(std::clamp(g + 128, 0, 255));
+			color.b = static_cast<uint8_t>(std::clamp(b + 128, 0, 255));
 		}
 	}
 }
