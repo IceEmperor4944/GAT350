@@ -12,4 +12,7 @@ public:
 public:
     SDL_Window* m_window{ nullptr };
     SDL_Renderer* m_renderer{ nullptr };
+
+    int m_width = 0;
+    int m_height = 0;
 };

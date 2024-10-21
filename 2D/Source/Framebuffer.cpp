@@ -14,6 +14,7 @@ Framebuffer::Framebuffer(const Renderer& renderer, int width, int height) {
 	if (!m_texture) {
 		std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
 	}
+
 	m_buffer.resize(m_width * m_height);
 }
 
@@ -56,6 +57,8 @@ void Framebuffer::DrawRect(int x, int y, int w, int h, const color_t& color){
 }
 
 void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& color) {
+	ClipLine(x1, x2, y1, y2);
+	
 	int dx = x2 - x1;
 	int dy = y2 - y1;
 
@@ -85,6 +88,8 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 }
 
 void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color) {
+	ClipLine(x1, x2, y1, y2);
+
 	int dx = abs(x2 - x1);
 	int dy = abs(y2 - y1);
 
@@ -108,7 +113,7 @@ void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 	//std::cout << "Sorted points: (" << x1 << "," << y1 << "), (" << x2 << "," << y2 << ")\n";
 
 	for (int x = x1, y = y1; x < x2; x++) {
-		(steep) ? DrawPoint(y, x, color) : DrawPoint(x, y, color);
+		(steep) ? DrawPointClip(y, x, color) : DrawPointClip(x, y, color);
 
 		error -= dy;
 		if (error < 0) {
@@ -287,4 +292,75 @@ void Framebuffer::CircleBres(int xc, int yc, int x, int y, const color_t& color)
 	DrawPoint(xc - y, yc + x, color);
 	DrawPoint(xc + y, yc - x, color);
 	DrawPoint(xc - y, yc - x, color);
+}
+
+void Framebuffer::ClipLine(int& x1, int& y1, int& x2, int& y2) {
+	int point1 = ClipCompute(x1, y1);
+	int point2 = ClipCompute(x2, y2);
+
+	bool accept = false;
+
+	while (true) {
+		if ((point1 == 0) && (point2 == 0)) {
+			accept = true;
+			break;
+		}
+		else if (point1 & point2) {
+			break;
+		}
+		else {
+			int point_out;
+			int x, y;
+
+			if (point1 != 0)
+				point_out = point1;
+			else
+				point_out = point2;
+
+			if (point_out & TOP) {
+				x = x1 + (x2 - x1) * (maxY - y1) / (y2 - y1);
+				y = maxY;
+			} else if (point_out & BOTTOM) {
+				x = x1 + (x2 - x1) * (minY - y1) / (y2 - y1);
+				y = minY;
+			} else if (point_out & RIGHT) {
+				y = y1 + (y2 - y1) * (maxX - x1) / (x2 - x1);
+				x = maxX;
+			} else if (point_out & LEFT) {
+				y = y1 + (y2 - y1) * (minX - x1) / (x2 - x1);
+				x = minX;
+			}
+
+			if (point_out == point1) {
+				x1 = x;
+				y1 = y;
+				point1 = ClipCompute(x1, y1);
+			} else {
+				x2 = x;
+				y2 = y;
+				point2 = ClipCompute(x2, y2);
+			}
+		}
+	}
+}
+
+int Framebuffer::ClipCompute(int x, int y) {
+	maxX = m_width;
+	maxY = m_height;
+
+	int point = INSIDE;
+
+	if (x < minX) {
+		point |= LEFT;
+	} else if (x > maxX) {
+		point |= RIGHT;
+	}
+
+	if (y < minY) {
+		point |= BOTTOM;
+	} else if (y > maxY) {
+		point |= TOP;
+	}
+
+	return point;
 }

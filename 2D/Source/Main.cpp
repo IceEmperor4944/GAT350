@@ -4,18 +4,39 @@
 #include "PostProcess.h"
 #include "MathUtils.h"
 #include "Color.h"
+#include "Model.h"
+#include "Transform.h"
+#include "ETime.h"
+#include "Input.h"
+#include "Camera.h"
+#include "Actor.h"
+#include "Random.h"
 
 #include <SDL.h>
 #include <iostream>
 #include <memory>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 int main(int argc, char* argv[]) {
+    //initialize
+    Time time;
+    Input input;
+    input.Initialize();
+
     Renderer renderer;
     renderer.Initialize();
-    renderer.CreateWindow("2D", 1000, 1000);
+    renderer.CreateWindow("2D", 800, 600);
 
-    Framebuffer framebuffer(renderer, 1000, 1000);
+    SetBlendMode(BlendMode::NORMAL);
 
+    Camera camera(renderer.m_width, renderer.m_height);
+    camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
+    camera.SetProjection(90.0f, 800.0f / 600, 0.1f, 200.0f);
+    Transform camTrans{ {0, 0, -20} };
+
+    Framebuffer framebuffer(renderer, 800, 600);
     Image image;
     image.Load("bridge.jpg");
 
@@ -23,8 +44,25 @@ int main(int argc, char* argv[]) {
     imageAlpha.Load("colors.png");
     PostProcess::Alpha(imageAlpha.m_buffer, 128);
 
+    vertices_t vertices{ {0, -5, 0}, {5, 5, 0}, {-5, 5, 0} };
+    //Model model(vertices, { 255, 0, 0, 255 });
+    auto model = std::make_shared<Model>();
+    model->Load("torus.obj");
+    model->SetColor({ 0, 255, 0, 255 });
+
+    std::vector<std::unique_ptr<Actor>> actors;
+    for (int i = 0; i < 1; i++) {
+        Transform transform{ {randomf(-10.0f, 10.0f), 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{2} };
+        auto actor = std::make_unique<Actor>(transform, model);
+        actor->SetColor({ (uint8_t)random(256), (uint8_t)random(256), (uint8_t)random(256), 255 });
+        actors.push_back(std::move(actor));
+    }
+
     bool quit = false;
     while (!quit) {
+        time.Tick();
+        input.Update();
+
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -60,17 +98,14 @@ int main(int argc, char* argv[]) {
         //framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, 10, { 255, 255, 255, 255 });
         //framebuffer.DrawCubicCurve(300, 700, 700, 700, mx, my, 600, 400, 10, { 255, 255, 255, 255 });
 
-        int ticks = SDL_GetTicks();
-        float time = ticks * 0.001f;
-        float t = abs(std::sin(time));
         //int x, y;
         //CubicPoint(300, 700, 700, 700, mx, my, 600, 400, t, x, y);
         //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
-        
-        SetBlendMode(BlendMode::NORMAL);
-        framebuffer.DrawImage(100, 300, image);
-        SetBlendMode(BlendMode::ADDITIVE);
-        framebuffer.DrawImage(mx - 100, my - 100, imageAlpha);
+
+        //SetBlendMode(BlendMode::NORMAL);
+        //framebuffer.DrawImage(100, 300, image);
+        //SetBlendMode(BlendMode::MULTIPLY);
+        //framebuffer.DrawImage(mx - 100, my - 100, imageAlpha);
 
         //PostProcess::Invert(framebuffer.m_buffer);
         //PostProcess::Monochrome(framebuffer.m_buffer);
@@ -84,10 +119,29 @@ int main(int argc, char* argv[]) {
         //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 128);
         //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-        framebuffer.Update();
+        
+        glm::vec3 direction{ 0 };
+        if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = -1;
+        if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
+        if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
 
+        camTrans.rotation.y += input.GetMousePositionDelta().x * 0.1f;
+        camTrans.rotation.x += input.GetMousePositionDelta().y * 0.1f;
+
+        glm::vec3 offset = camTrans.GetMatrix() * glm::vec4{ direction, 0 };
+
+        camTrans.position += offset * 70.0f * time.GetDeltaTime();
+        camera.SetView(camTrans.position, camTrans.position + camTrans.GetForward());
+
+        for (auto& actor : actors) {
+            actor->Draw(framebuffer, camera);
+        }
+
+        framebuffer.Update();
         renderer = framebuffer;
-        //renderer.CopyFramebuffer(framebuffer);
 
         // show screen
         SDL_RenderPresent(renderer.m_renderer);

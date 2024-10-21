@@ -29,7 +29,21 @@ public:
 	void DrawImage(int x, int y, const class Image& image);
 	void DrawImage(int x, int y, int w, int h, const class Image& image);
 private:
+	
+	int INSIDE = 0; // 0000
+	int LEFT = 1; // 0001
+	int RIGHT = 2; // 0010
+	int BOTTOM = 4; // 0100
+	int TOP = 8; // 1000
+
+	int maxX;
+	int maxY;
+	const int minX = 0;
+	const int minY = 0;
+
 	void CircleBres(int xc, int yc, int x, int y, const color_t& color);
+	void ClipLine(int& x1, int& y1, int& x2, int& y2);
+	int ClipCompute(int x, int y);
 public:
 	int m_width{ 0 };
 	int m_height{ 0 };

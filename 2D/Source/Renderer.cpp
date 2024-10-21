@@ -10,6 +10,9 @@ void Renderer::Initialize() {
 }
 
 bool Renderer::CreateWindow(std::string title, int width, int height) {
+    m_width = width;
+    m_height = height;
+
     // create window
     // returns pointer to window if successful or nullptr if failed
     m_window = SDL_CreateWindow(title.c_str(),
@@ -23,6 +26,11 @@ bool Renderer::CreateWindow(std::string title, int width, int height) {
     }
 
     m_renderer = SDL_CreateRenderer(m_window, -1, 0);
+    if (m_renderer == nullptr) {
+        std::cerr << "Error creating SDL renderer: " << SDL_GetError() << std::endl;
+        SDL_Quit();
+        return false;
+    }
 
     return true;
 }
