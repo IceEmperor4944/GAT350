@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     PostProcess::Alpha(imageAlpha.m_buffer, 128);
 
     auto model = std::make_shared<Model>();
-    model->Load("tree.obj");
+    model->Load("torus.obj");
     model->SetColor({ 0, 255, 0, 255 });
 
     std::vector<std::unique_ptr<Actor>> actors;
