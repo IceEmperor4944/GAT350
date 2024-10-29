@@ -1,25 +1,30 @@
 #pragma once
+#include "Ray.h"
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_FORCE_LEFT_HANDED
 #include <glm/glm.hpp>
 
 class Camera {
 public:
-	Camera(int width, int height) : screenWidth{ width }, screenHeight{ height } {}
+	Camera(float fov, float aspect) : m_fov{ fov }, m_aspectRatio{ aspect } {}
 
 	void SetView(const glm::vec3& eye, const glm::vec3& target, const glm::vec3& up = { 0, 1, 0 });
-	void SetProjection(float fov, float aspect, float near, float far);
-
-	glm::vec3 ModelToView(const glm::vec3& pos) const;
-	glm::vec4 ViewToProjection(const glm::vec3& pos) const;
-	glm::ivec2 ViewToScreen(const glm::vec3& pos) const;
-
-	const glm::mat4& GetView() { return view; }
-	const glm::mat4& GetProjection() { return projection; }
+	ray_t GetRay(const glm::vec2& point) const;
 private:
-	glm::mat4 view{ 0 };
-	glm::mat4 projection{ 0 };
+	void CalculateViewPlane();
+private:
+	float m_fov{ 60 }; // fov in degrees
+	float m_aspectRatio{ 1 }; // screen width / screen height
 
-	int screenWidth = 0;
-	int screenHeight = 0;
+	glm::vec3 m_eye{ 0 };
+
+	// camera axis
+	glm::vec3 m_forward{ 0 };
+	glm::vec3 m_right{ 0 };
+	glm::vec3 m_up{ 0 };
+
+	// view plane origin and horizontal and vertical direction vectors
+	glm::vec3 m_lowerLeft{ 0 };
+	glm::vec3 m_horizontal{ 0 };
+	glm::vec3 m_vertical{ 0 };
 };

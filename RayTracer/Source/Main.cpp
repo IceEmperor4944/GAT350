@@ -10,7 +10,9 @@
 #include "Input.h"
 #include "Camera.h"
 #include "Actor.h"
+#include "Tracer.h"
 #include "Random.h"
+#include "Scene.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -20,48 +22,33 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 int main(int argc, char* argv[]) {
+    srand((unsigned int)time(NULL));
     //initialize
     Time time;
 
     Renderer renderer;
     renderer.Initialize();
-    renderer.CreateWindow("2D", 800, 600);
-    
-    Input input;
-    input.Initialize();
-    input.Update();
+    renderer.CreateWindow("Ray Tracer", 800, 600);
 
     SetBlendMode(BlendMode::NORMAL);
 
-    Camera camera(renderer.m_width, renderer.m_height);
-    camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
-    camera.SetProjection(90.0f, 800.0f / 600, 0.1f, 200.0f);
-    Transform camTrans{ {0, 0, -20} };
+    Framebuffer framebuffer(renderer, renderer.m_width, renderer.m_height);
 
-    Framebuffer framebuffer(renderer, 800, 600);
-    Image image;
-    image.Load("bridge.jpg");
+    Camera camera{ 70.0f, framebuffer.m_width / (float)framebuffer.m_height };
+    camera.SetView({ 0, 0, 20 }, { 0, 0, 0 });
 
-    Image imageAlpha;
-    imageAlpha.Load("colors.png");
-    PostProcess::Alpha(imageAlpha.m_buffer, 128);
+    Scene scene;
 
-    auto model = std::make_shared<Model>();
-    model->Load("torus.obj");
-    model->SetColor({ 0, 255, 0, 255 });
+    auto gray = std::make_shared<Lambertian>(color3_t{ 0.2f });
 
-    std::vector<std::unique_ptr<Actor>> actors;
-    for (int i = 0; i < 1; i++) {
-        Transform transform{ {randomf(-10.0f, 10.0f), 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{2} };
-        auto actor = std::make_unique<Actor>(transform, model);
-        actor->SetColor({ (uint8_t)random(256), (uint8_t)random(256), (uint8_t)random(256), 255 });
-        actors.push_back(std::move(actor));
-    }
+
+
+    auto sphere = std::make_unique<Sphere>(glm::vec3{ 0, 0, 0 }, 2.0f, gray);
+    scene.AddObject(std::move(sphere));
 
     bool quit = false;
     while (!quit) {
         time.Tick();
-        input.Update();
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -73,80 +60,9 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        framebuffer.Clear(color_t{ 0, 0, 0, 255 });
+        framebuffer.Clear(ColorConvert(color4_t{ 0, 0.25f, 0, 1 }));
 
-        for (int i = 0; i < 5; i++) {
-            int x = rand() % 750;
-            int y = rand() % 750;
-            int x2 = rand() % 750;
-            int y2 = rand() % 750;
-            int x3 = rand() % 750;
-            int y3 = rand() % 750;
-            color_t col = { (Uint8)(rand() % 255), (Uint8)(rand() % 255), (Uint8)(rand() % 255), 255 };
-            //framebuffer.DrawPoint(x, y, { 255, 255, 255, 255 });
-            //framebuffer.DrawRect(100, 100, 10, 10, col);
-            //framebuffer.DrawLine(0, 0, 100, 100, col);
-            //framebuffer.DrawCircle(100, 200, 50, col);
-            //framebuffer.DrawTriangle(200, 200, 300, 100, 400, 200, col);
-            //framebuffer.DrawImage(x, y, image);
-        }
-
-        int mx, my;
-        SDL_GetMouseState(&mx, &my);
-
-        //framebuffer.DrawLinearCurve(100, 100, 200, 200, { 255, 255, 255, 255 });
-        //framebuffer.DrawQuadraticCurve(100, 200, mx, my, 300, 200, 10, { 255, 255, 255, 255 });
-        //framebuffer.DrawCubicCurve(300, 700, 700, 700, mx, my, 600, 400, 10, { 255, 255, 255, 255 });
-
-        //int x, y;
-        //CubicPoint(300, 700, 700, 700, mx, my, 600, 400, t, x, y);
-        //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
-
-        //SetBlendMode(BlendMode::NORMAL);
-        //framebuffer.DrawImage(100, 300, image);
-        //SetBlendMode(BlendMode::MULTIPLY);
-        //framebuffer.DrawImage(mx - 100, my - 100, imageAlpha);
-
-        //PostProcess::Invert(framebuffer.m_buffer);
-        //PostProcess::Monochrome(framebuffer.m_buffer);
-        //PostProcess::Brightness(framebuffer.m_buffer, 20);
-        //PostProcess::ColorBalance(framebuffer.m_buffer, 100, 100, -10);
-        //PostProcess::Noise(framebuffer.m_buffer, 10);
-        //PostProcess::Threshold(framebuffer.m_buffer, 150);
-        //PostProcess::Posterize(framebuffer.m_buffer, 10);
-        //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-        //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-        //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-        //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 128);
-        //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-        
-        if (input.GetMouseButtonDown(2)) {
-            input.SetRelativeMode(true);
-
-            glm::vec3 direction{ 0 };
-            if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1;
-            if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = -1;
-            if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
-
-            camTrans.rotation.y += input.GetMouseRelative().x * 0.25f;
-            camTrans.rotation.x += input.GetMouseRelative().y * 0.25f;
-
-            glm::vec3 offset = camTrans.GetMatrix() * glm::vec4{ direction, 0 };
-
-            camTrans.position += offset * 70.0f * time.GetDeltaTime();
-        }
-        else {
-            input.SetRelativeMode(false);
-        }
-                
-        camera.SetView(camTrans.position, camTrans.position + camTrans.GetForward());
-
-        for (auto& actor : actors) {
-            actor->Draw(framebuffer, camera);
-        }
+        scene.Render(framebuffer, camera);
 
         framebuffer.Update();
         renderer = framebuffer;

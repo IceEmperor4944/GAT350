@@ -35,28 +35,54 @@ int main(int argc, char* argv[]) {
 
     Camera camera(renderer.m_width, renderer.m_height);
     camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
-    camera.SetProjection(90.0f, 800.0f / 600, 0.1f, 200.0f);
-    Transform camTrans{ {0, 0, -20} };
+    camera.SetProjection(90.0f, 800.0f / 600, 0.1f, 1000.0f);
+    Transform camTrans{ {0, 0, -500} };
 
     Framebuffer framebuffer(renderer, 800, 600);
     Image image;
-    image.Load("bridge.jpg");
+    image.Load("sky.jpg");
 
     Image imageAlpha;
     imageAlpha.Load("colors.png");
     PostProcess::Alpha(imageAlpha.m_buffer, 128);
 
-    auto model = std::make_shared<Model>();
-    model->Load("tree.obj");
+    auto tree = std::make_shared<Model>();
+    auto stool = std::make_shared<Model>();
+    auto teapot = std::make_shared<Model>();
+    tree->SetColor  ({ 0, 255, 0, 255 });
+    stool->SetColor ({ 139, 69, 19, 255 });
+    teapot->SetColor({ 128, 128, 128, 255 });
+    tree->Load("tree.obj");
+    stool->Load("stool.obj");
+    teapot->Load("teapot.obj");
+
+    std::vector<std::unique_ptr<Actor>> actors;
+    for (int i = 0; i < 1; i++) {
+        Transform transform1{ {0, -100, 200}, glm::vec3{0, 0, 0}, glm::vec3{2} };
+        Transform transform2{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{40} };
+        Transform transform3{ {0, 40, 0}, glm::vec3{0, 0, 0}, glm::vec3{15} };
+        auto actor1 = std::make_unique<Actor>(transform1, tree);
+        actor1->SetColor({ 0, 255, 0, 255 });
+        auto actor2 = std::make_unique<Actor>(transform2, stool);
+        actor2->SetColor({ 139, 69, 19, 255 });
+        auto actor3 = std::make_unique<Actor>(transform3, teapot);
+        actor3->SetColor({ 128, 128, 128, 255 });
+        actors.push_back(std::move(actor1));
+        actors.push_back(std::move(actor2));
+        actors.push_back(std::move(actor3));
+    }
+
+    /*auto model = std::make_shared<Model>();
+    model->Load("teapot.obj");
     model->SetColor({ 0, 255, 0, 255 });
 
     std::vector<std::unique_ptr<Actor>> actors;
     for (int i = 0; i < 1; i++) {
-        Transform transform{ {randomf(-10.0f, 10.0f), 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{2} };
+        Transform transform{ {randomf(-10.0f, 10.0f), 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{80} };
         auto actor = std::make_unique<Actor>(transform, model);
         actor->SetColor({ (uint8_t)random(256), (uint8_t)random(256), (uint8_t)random(256), 255 });
         actors.push_back(std::move(actor));
-    }
+    }*/
 
     bool quit = false;
     while (!quit) {
@@ -102,14 +128,14 @@ int main(int argc, char* argv[]) {
         //CubicPoint(300, 700, 700, 700, mx, my, 600, 400, t, x, y);
         //framebuffer.DrawRect(x - 20, y - 20, 40, 40, { 0, 255, 0, 255 });
 
-        //SetBlendMode(BlendMode::NORMAL);
-        //framebuffer.DrawImage(100, 300, image);
+        SetBlendMode(BlendMode::NORMAL);
+        framebuffer.DrawImage(0, 0, 800, 600, image);
         //SetBlendMode(BlendMode::MULTIPLY);
         //framebuffer.DrawImage(mx - 100, my - 100, imageAlpha);
 
         //PostProcess::Invert(framebuffer.m_buffer);
         //PostProcess::Monochrome(framebuffer.m_buffer);
-        //PostProcess::Brightness(framebuffer.m_buffer, 20);
+        PostProcess::Brightness(framebuffer.m_buffer, -75);
         //PostProcess::ColorBalance(framebuffer.m_buffer, 100, 100, -10);
         //PostProcess::Noise(framebuffer.m_buffer, 10);
         //PostProcess::Threshold(framebuffer.m_buffer, 150);
@@ -124,12 +150,12 @@ int main(int argc, char* argv[]) {
             input.SetRelativeMode(true);
 
             glm::vec3 direction{ 0 };
-            if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1;
-            if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = -1;
-            if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z = 1;
-            if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1;
+            if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x =  1.0f;
+            if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1.0f;
+            if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y =  1.0f;
+            if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = -1.0f;
+            if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z =  1.0f;
+            if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1.0f;
 
             camTrans.rotation.y += input.GetMouseRelative().x * 0.25f;
             camTrans.rotation.x += input.GetMouseRelative().y * 0.25f;

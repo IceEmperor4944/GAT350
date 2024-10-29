@@ -31,10 +31,10 @@ public:
 private:
 	
 	int INSIDE = 0; // 0000
-	int LEFT = 1; // 0001
-	int RIGHT = 2; // 0010
+	int LEFT = 1;	// 0001
+	int RIGHT = 2;	// 0010
 	int BOTTOM = 4; // 0100
-	int TOP = 8; // 1000
+	int TOP = 8;	// 1000
 
 	int maxX;
 	int maxY;

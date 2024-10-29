@@ -88,7 +88,7 @@ void Framebuffer::DrawLineSlope(int x1, int y1, int x2, int y2, const color_t& c
 }
 
 void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color) {
-	ClipLine(x1, x2, y1, y2);
+	ClipLine(x1, y1, x2, y2);
 
 	int dx = abs(x2 - x1);
 	int dy = abs(y2 - y1);
@@ -112,7 +112,7 @@ void Framebuffer::DrawLine(int x1, int y1, int x2, int y2, const color_t& color)
 
 	//std::cout << "Sorted points: (" << x1 << "," << y1 << "), (" << x2 << "," << y2 << ")\n";
 
-	for (int x = x1, y = y1; x < x2; x++) {
+	for (int x = x1, y = y1; x <= x2; x++) {
 		(steep) ? DrawPointClip(y, x, color) : DrawPointClip(x, y, color);
 
 		error -= dy;
@@ -341,6 +341,9 @@ void Framebuffer::ClipLine(int& x1, int& y1, int& x2, int& y2) {
 				point2 = ClipCompute(x2, y2);
 			}
 		}
+	}
+	if (!accept) {
+		x1 = y1 = x2 = y2 = -1;
 	}
 }
 
