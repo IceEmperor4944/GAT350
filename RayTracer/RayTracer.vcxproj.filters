@@ -43,8 +43,15 @@
     <ClCompile Include="Source\Sphere.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Plane.cpp" />
-    <ClCompile Include="Source\Material.cpp" />
+    <ClCompile Include="Source\Material.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Plane.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Triangle.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Actor.h">
@@ -105,6 +112,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Plane.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Triangle.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,7 +14,7 @@ struct ray_t {
 };
 
 struct raycastHit_t {
-	float distance{ 0 };
+	float distance = 0;
 	glm::vec3 point{ 0 };
 	glm::vec3 normal{ 0 };
 	std::weak_ptr<class Material> material;
