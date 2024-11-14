@@ -52,9 +52,9 @@ int main(int argc, char* argv[]) {
     tree->SetColor  ({ 0, 255, 0, 255 });
     stool->SetColor ({ 139, 69, 19, 255 });
     teapot->SetColor({ 128, 128, 128, 255 });
-    tree->Load("tree.obj");
-    stool->Load("stool.obj");
-    teapot->Load("teapot.obj");
+    tree->Load("Models/tree.obj");
+    stool->Load("Models/stool.obj");
+    teapot->Load("Models/log.obj");
 
     std::vector<std::unique_ptr<Actor>> actors;
     for (int i = 0; i < 1; i++) {

@@ -2,6 +2,7 @@
 #include "Framebuffer.h"
 #include "Camera.h"
 #include "Triangle.h"
+#include "Sphere.h"
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -9,6 +10,22 @@
 void Model::Update() {
 	for (size_t i = 0; i < m_localVertices.size(); i++) {
 		m_vertices[i] = m_transform * glm::vec4{ m_localVertices[i], 1 };
+	}
+
+	// get center point of transformed vertices
+	m_center = glm::vec3{ 0 };
+	for (auto& vertex : m_vertices)
+	{
+		m_center += vertex;
+	}
+	m_center /= (float)m_vertices.size();
+
+	// get radius of transformed vertices
+	m_radius = 0;
+	for (auto& vertex : m_vertices)
+	{
+		float radius = glm::length(vertex - m_center);
+		m_radius = glm::max(radius, m_radius);
 	}
 }
 
@@ -77,7 +94,11 @@ bool Model::Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDist, float
 	//sphere shit
 	
 	for (size_t i = 0; i < m_localVertices.size(); i += 3) {
+		// check for bounding sphere raycast
 		float t;
+		if (!Sphere::Raycast(ray, m_center, m_radius, minDist, maxDist, t)) return false;
+
+		//check cast ray with mesh triangles
 		if (Triangle::Raycast(ray, m_vertices[i], m_vertices[i + 1], m_vertices[i + 2], minDist, maxDist, t)) {
 			raycastHit.distance = t;
 			raycastHit.point = ray.at(t);

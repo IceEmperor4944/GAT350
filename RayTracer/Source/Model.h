@@ -20,4 +20,8 @@ public:
 private:
 	vertices_t m_vertices;
 	vertices_t m_localVertices;
+
+	// sphere raycast check
+	glm::vec3 m_center{ 0 };
+	float m_radius = 0.0f;
 };
