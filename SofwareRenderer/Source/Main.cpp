@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Actor.h"
 #include "Random.h"
+#include "Shader.h"
 
 #include <SDL.h>
 #include <iostream>
@@ -46,7 +47,7 @@ int main(int argc, char* argv[]) {
     imageAlpha.Load("colors.png");
     PostProcess::Alpha(imageAlpha.m_buffer, 128);
 
-    auto tree = std::make_shared<Model>();
+    /*auto tree = std::make_shared<Model>();
     auto stool = std::make_shared<Model>();
     auto teapot = std::make_shared<Model>();
     tree->SetColor  ({ 0, 255, 0, 255 });
@@ -54,9 +55,25 @@ int main(int argc, char* argv[]) {
     teapot->SetColor({ 128, 128, 128, 255 });
     tree->Load("Models/tree.obj");
     stool->Load("Models/stool.obj");
-    teapot->Load("Models/log.obj");
+    teapot->Load("Models/log.obj");*/
 
+    //shader
+    VertexShader::uniforms.view = camera.GetView();
+    VertexShader::uniforms.projection = camera.GetProjection();
+    VertexShader::uniforms.ambient = color3_t{ 0.5f, 1, 0.5f };
+
+    //models
+    auto sphere = std::make_shared<Model>();
+    sphere->SetColor({ 255, 0, 0, 255 });
+    sphere->Load("Models/sphere.obj");
+
+    //actors
     std::vector<std::unique_ptr<Actor>> actors;
+    Transform transform{ glm::vec3{ 0 }, glm::vec3{ 0 }, glm::vec3{ 2 } };
+    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, sphere);
+    actors.push_back(std::move(actor));
+
+    /*
     for (int i = 0; i < 1; i++) {
         Transform transform1{ {0, -100, 200}, glm::vec3{0, 0, 0}, glm::vec3{2} };
         Transform transform2{ {0, 0, 0}, glm::vec3{0, 0, 0}, glm::vec3{40} };
@@ -70,7 +87,7 @@ int main(int argc, char* argv[]) {
         actors.push_back(std::move(actor1));
         actors.push_back(std::move(actor2));
         actors.push_back(std::move(actor3));
-    }
+    }*/
 
     /*auto model = std::make_shared<Model>();
     model->Load("teapot.obj");

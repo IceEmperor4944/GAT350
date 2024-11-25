@@ -18,7 +18,7 @@ public:
 	bool Load(const std::string& filename);
 	bool Hit(const ray_t& ray, raycastHit_t& raycastHit, float minDistance, float maxDistance) override;
 private:
-	vertices_t m_vertices;
+	vertices_t m_vb;
 	vertices_t m_localVertices;
 
 	// sphere raycast check

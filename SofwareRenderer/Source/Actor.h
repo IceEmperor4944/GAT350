@@ -11,9 +11,7 @@ public:
 	const Transform& GetTransform() const { return m_transform; }
 	
 	void Draw(class Framebuffer& buffer, const class Camera& camera);
-	void SetColor(const color_t& color) { m_color = color; }
 private:
 	Transform m_transform;
 	std::shared_ptr<Model> m_model;
-	color_t m_color{ 255, 255, 255, 255 };
 };

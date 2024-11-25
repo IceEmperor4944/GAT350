@@ -19,40 +19,32 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\SofwareRenderer\Source\Actor.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Camera.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Color.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\ETime.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\FragmentShader.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Framebuffer.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Image.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Input.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\MathUtils.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Model.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\PostProcess.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Random.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Rasterizer.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Renderer.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Shader.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\Transform.h" />
-    <ClInclude Include="..\SofwareRenderer\Source\VertexShader.h" />
+    <ClCompile Include="Source\Actor.cpp" />
+    <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\Color.cpp" />
+    <ClCompile Include="Source\ETime.cpp" />
+    <ClCompile Include="Source\Framebuffer.cpp" />
+    <ClCompile Include="Source\Image.cpp" />
+    <ClCompile Include="Source\Input.cpp" />
+    <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Model.cpp" />
+    <ClCompile Include="Source\PostProcess.cpp" />
+    <ClCompile Include="Source\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\SofwareRenderer\Source\Actor.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Camera.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Color.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\ETime.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\FragmentShader.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Framebuffer.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Image.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Input.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Main.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Model.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\PostProcess.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Rasterizer.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Renderer.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\Shader.cpp" />
-    <ClCompile Include="..\SofwareRenderer\Source\VertexShader.cpp" />
+    <ClInclude Include="Source\Actor.h" />
+    <ClInclude Include="Source\Camera.h" />
+    <ClInclude Include="Source\Color.h" />
+    <ClInclude Include="Source\ETime.h" />
+    <ClInclude Include="Source\Framebuffer.h" />
+    <ClInclude Include="Source\Image.h" />
+    <ClInclude Include="Source\Input.h" />
+    <ClInclude Include="Source\MathUtils.h" />
+    <ClInclude Include="Source\Model.h" />
+    <ClInclude Include="Source\PostProcess.h" />
+    <ClInclude Include="Source\Random.h" />
+    <ClInclude Include="Source\Renderer.h" />
+    <ClInclude Include="Source\Transform.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

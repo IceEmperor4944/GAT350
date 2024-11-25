@@ -1,6 +1,6 @@
 #include "Model.h"
 #include "Framebuffer.h"
-#include "Camera.h"
+#include "Shader.h"
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -15,11 +15,11 @@ bool Model::Load(const std::string& filename) {
 		return false;
 	}
 
-	vertices_t vertices;
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec3> normals;
 	std::string line;
 	while (std::getline(stream, line)) {
 		// read in vertex positions
-		// https://cplusplus.com/reference/string/string/substr/
 		if (line.substr(0, 2) == "v ") {
 			// read position of vertex
 			std::istringstream sstream{ line.substr(2) };
@@ -29,6 +29,17 @@ bool Model::Load(const std::string& filename) {
 			sstream >> position.z;
 
 			vertices.push_back(position);
+		}
+		// read in vertex normals
+		else if (line.substr(0, 3) == "vn ") {
+			// read position of vertex
+			std::istringstream sstream{ line.substr(2) };
+			glm::vec3 normal;
+			sstream >> normal.x;
+			sstream >> normal.y;
+			sstream >> normal.z;
+
+			normals.push_back(normal);
 		}
 		// read in faces (triangles)
 		else if (line.substr(0, 2) == "f ") {
@@ -51,11 +62,12 @@ bool Model::Load(const std::string& filename) {
 				}
 
 				// check if index is valid (not 0)
-				if (index[0]) {
-					// get vertex at index position
-					glm::vec3 position = vertices[index[0] - 1];
+				if (index[0] && index[1]) {
 					// add vertex to model vertices
-					m_vertices.push_back(position);
+					vertex_t vertex;
+					vertex.position = vertices[index[0] - 1];
+					vertex.normal = normals[index[1] - 1];
+					m_vb.push_back(vertex);
 				}
 			}
 		}
@@ -67,10 +79,12 @@ bool Model::Load(const std::string& filename) {
 }
 
 void Model::Draw(Framebuffer& buffer, const glm::mat4& model, const class Camera& camera) {
-	for (int i = 0; i < m_vertices.size(); i += 3) {
-		vertex_t p1 = model * glm::vec4{ m_vertices[i + 0], 1 };
-		vertex_t p2 = model * glm::vec4{ m_vertices[i + 1], 1 };
-		vertex_t p3 = model * glm::vec4{ m_vertices[i + 2], 1 };
+	Shader::Draw(m_vb);
+
+	/*for (int i = 0; i < m_vb.size(); i += 3) {
+		vertex_t p1 = model * glm::vec4{ m_vb[i + 0], 1 };
+		vertex_t p2 = model * glm::vec4{ m_vb[i + 1], 1 };
+		vertex_t p3 = model * glm::vec4{ m_vb[i + 2], 1 };
 
 		p1 = camera.ModelToView(p1);
 		p2 = camera.ModelToView(p2);
@@ -84,6 +98,6 @@ void Model::Draw(Framebuffer& buffer, const glm::mat4& model, const class Camera
 			continue;
 		}
 
-		buffer.DrawTriangle(s1.x, s1.y, s2.x, s2.y, s3.x, s3.y, m_color);
-	}
+		buffer.DrawTriangle(s1.x, s1.y, s2.x, s2.y, s3.x, s3.y, ColorConvert(m_color));
+	}*/
 }
