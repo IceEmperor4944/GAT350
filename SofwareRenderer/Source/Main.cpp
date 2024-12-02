@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     Camera camera(renderer.m_width, renderer.m_height);
     camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
     camera.SetProjection(90.0f, 800.0f / 600, 0.1f, 1000.0f);
-    Transform camTrans{ {0, 0, -500} };
+    Transform camTrans{ {0, 0, -20} };
 
     Framebuffer framebuffer(renderer, 800, 600);
     Image image;
@@ -60,7 +60,13 @@ int main(int argc, char* argv[]) {
     //shader
     VertexShader::uniforms.view = camera.GetView();
     VertexShader::uniforms.projection = camera.GetProjection();
-    VertexShader::uniforms.ambient = color3_t{ 0.5f, 1, 0.5f };
+    VertexShader::uniforms.ambient = color3_t{ 0.01f };
+
+    VertexShader::uniforms.light.position = glm::vec3{ 10, 10, -10 };
+    VertexShader::uniforms.light.direction = glm::vec3{ 0, -1, 0 }; // light pointing down
+    VertexShader::uniforms.light.color = color3_t{ 1 }; // white light
+
+    Shader::framebuffer = &framebuffer;
 
     //models
     auto sphere = std::make_shared<Model>();
@@ -167,12 +173,12 @@ int main(int argc, char* argv[]) {
             input.SetRelativeMode(true);
 
             glm::vec3 direction{ 0 };
-            if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x =  1.0f;
-            if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -1.0f;
-            if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y =  1.0f;
-            if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = -1.0f;
-            if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z =  1.0f;
-            if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -1.0f;
+            if (input.GetKeyDown(SDL_SCANCODE_D)) direction.x =  0.25f;
+            if (input.GetKeyDown(SDL_SCANCODE_A)) direction.x = -0.25f;
+            if (input.GetKeyDown(SDL_SCANCODE_E)) direction.y =  0.25f;
+            if (input.GetKeyDown(SDL_SCANCODE_Q)) direction.y = -0.25f;
+            if (input.GetKeyDown(SDL_SCANCODE_W)) direction.z =  0.25f;
+            if (input.GetKeyDown(SDL_SCANCODE_S)) direction.z = -0.25f;
 
             camTrans.rotation.y += input.GetMouseRelative().x * 0.25f;
             camTrans.rotation.x += input.GetMouseRelative().y * 0.25f;
@@ -186,9 +192,12 @@ int main(int argc, char* argv[]) {
         }
                 
         camera.SetView(camTrans.position, camTrans.position + camTrans.GetForward());
+        VertexShader::uniforms.view = camera.GetView();
 
-        for (auto& actor : actors) {
-            actor->Draw(framebuffer, camera);
+        for (auto& actor : actors)
+        {
+            actor->GetTransform().rotation.y += time.GetDeltaTime() * 90;
+            actor->Draw();
         }
 
         framebuffer.Update();

@@ -33,7 +33,7 @@ bool Model::Load(const std::string& filename) {
 		// read in vertex normals
 		else if (line.substr(0, 3) == "vn ") {
 			// read position of vertex
-			std::istringstream sstream{ line.substr(2) };
+			std::istringstream sstream{ line.substr(3) };
 			glm::vec3 normal;
 			sstream >> normal.x;
 			sstream >> normal.y;
@@ -66,7 +66,7 @@ bool Model::Load(const std::string& filename) {
 					// add vertex to model vertices
 					vertex_t vertex;
 					vertex.position = vertices[index[0] - 1];
-					vertex.normal = normals[index[1] - 1];
+					vertex.normal = (index[2]) ? normals[index[2] - 1] : glm::vec3{ 1 };
 					m_vb.push_back(vertex);
 				}
 			}
@@ -78,7 +78,7 @@ bool Model::Load(const std::string& filename) {
 	return true;
 }
 
-void Model::Draw(Framebuffer& buffer, const glm::mat4& model, const class Camera& camera) {
+void Model::Draw() {
 	Shader::Draw(m_vb);
 
 	/*for (int i = 0; i < m_vb.size(); i += 3) {

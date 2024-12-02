@@ -12,7 +12,7 @@ public:
 	Model(const vertexbuffer_t& vertices, const color4_t& color) : m_vb{ vertices }, m_color{ color } {}
 
 	bool Load(const std::string& filename);
-	void Draw(class Framebuffer& buffer, const glm::mat4& model, const class Camera& camera);
+	void Draw();
 
 	void SetColor(const color4_t& color) { m_color = color; }
 private:
