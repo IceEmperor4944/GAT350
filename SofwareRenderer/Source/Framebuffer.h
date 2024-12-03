@@ -4,8 +4,7 @@
 
 using color_t = SDL_Color;
 
-class Framebuffer
-{
+class Framebuffer {
 public:
 	Framebuffer(const class Renderer& renderer, int width, int height);
 	~Framebuffer();
@@ -28,8 +27,9 @@ public:
 
 	void DrawImage(int x, int y, const class Image& image);
 	void DrawImage(int x, int y, int w, int h, const class Image& image);
-private:
-	
+
+	std::vector<float>& GetDepth() { return m_depth; }
+private:	
 	int INSIDE = 0; // 0000
 	int LEFT = 1;	// 0001
 	int RIGHT = 2;	// 0010
@@ -44,6 +44,8 @@ private:
 	void CircleBres(int xc, int yc, int x, int y, const color_t& color);
 	void ClipLine(int& x1, int& y1, int& x2, int& y2);
 	int ClipCompute(int x, int y);
+	
+	std::vector<float> m_depth;
 public:
 	int m_width{ 0 };
 	int m_height{ 0 };

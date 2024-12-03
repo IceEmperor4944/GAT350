@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     Camera camera(renderer.m_width, renderer.m_height);
     camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
     camera.SetProjection(90.0f, 800.0f / 600, 0.1f, 1000.0f);
-    Transform camTrans{ {0, 0, -20} };
+    Transform camTrans{ {0, 0, -3} };
 
     Framebuffer framebuffer(renderer, 800, 600);
     Image image;
@@ -62,22 +62,46 @@ int main(int argc, char* argv[]) {
     VertexShader::uniforms.projection = camera.GetProjection();
     VertexShader::uniforms.ambient = color3_t{ 0.01f };
 
-    VertexShader::uniforms.light.position = glm::vec3{ 10, 10, -10 };
+    VertexShader::uniforms.light.position = glm::vec3{ 0, 10, 0 };
     VertexShader::uniforms.light.direction = glm::vec3{ 0, -1, 0 }; // light pointing down
     VertexShader::uniforms.light.color = color3_t{ 1 }; // white light
+
+    // materials
+    std::shared_ptr<material_t> material = std::make_shared<material_t>();
+    material->albedo = color3_t{ 0.5f, 0, 1 };
+    material->specular = color3_t{ 1 };
+    material->shininess = 256.0f;
+
+    std::shared_ptr<material_t> material2 = std::make_shared<material_t>();
+    material2->albedo = color3_t{ 0, 0.5f, 0 };
+    material2->specular = color3_t{ 0.5f };
+    material2->shininess = 32.0f;
+
+    std::shared_ptr<material_t> material3 = std::make_shared<material_t>();
+    material3->albedo = color3_t{ 1, 1, 0 };
+    material3->specular = color3_t{ 0.0f };
+    material3->shininess = 1.0f;
 
     Shader::framebuffer = &framebuffer;
 
     //models
-    auto sphere = std::make_shared<Model>();
-    sphere->SetColor({ 255, 0, 0, 255 });
-    sphere->Load("Models/sphere.obj");
+    auto model = std::make_shared<Model>();
+    model->SetColor({ 255, 0, 0, 255 });
+    model->Load("Models/ogre.obj");
 
     //actors
     std::vector<std::unique_ptr<Actor>> actors;
-    Transform transform{ glm::vec3{ 0 }, glm::vec3{ 0 }, glm::vec3{ 2 } };
-    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, sphere);
+    Transform transform{ glm::vec3{ 3, 0, 0 }, glm::vec3{ 0 }, glm::vec3{ 2 } };
+    std::unique_ptr<Actor> actor = std::make_unique<Actor>(transform, model, material);
     actors.push_back(std::move(actor));
+
+    Transform transform2{ glm::vec3{ -3, 0, 0 }, glm::vec3{ 0 }, glm::vec3{ 2 } };
+    std::unique_ptr<Actor> actor2 = std::make_unique<Actor>(transform2, model, material2);
+    actors.push_back(std::move(actor2));
+
+    Transform transform3{ glm::vec3{ 0, 0, 0 }, glm::vec3{ 0 }, glm::vec3{ 2 } };
+    std::unique_ptr<Actor> actor3 = std::make_unique<Actor>(transform3, model, material3);
+    actors.push_back(std::move(actor3));
 
     /*
     for (int i = 0; i < 1; i++) {
@@ -124,7 +148,7 @@ int main(int argc, char* argv[]) {
 
         framebuffer.Clear(color_t{ 0, 0, 0, 255 });
 
-        for (int i = 0; i < 5; i++) {
+        /*for (int i = 0; i < 5; i++) {
             int x = rand() % 750;
             int y = rand() % 750;
             int x2 = rand() % 750;
@@ -132,13 +156,13 @@ int main(int argc, char* argv[]) {
             int x3 = rand() % 750;
             int y3 = rand() % 750;
             color_t col = { (Uint8)(rand() % 255), (Uint8)(rand() % 255), (Uint8)(rand() % 255), 255 };
-            //framebuffer.DrawPoint(x, y, { 255, 255, 255, 255 });
-            //framebuffer.DrawRect(100, 100, 10, 10, col);
-            //framebuffer.DrawLine(0, 0, 100, 100, col);
-            //framebuffer.DrawCircle(100, 200, 50, col);
-            //framebuffer.DrawTriangle(200, 200, 300, 100, 400, 200, col);
-            //framebuffer.DrawImage(x, y, image);
-        }
+            framebuffer.DrawPoint(x, y, { 255, 255, 255, 255 });
+            framebuffer.DrawRect(100, 100, 10, 10, col);
+            framebuffer.DrawLine(0, 0, 100, 100, col);
+            framebuffer.DrawCircle(100, 200, 50, col);
+            framebuffer.DrawTriangle(200, 200, 300, 100, 400, 200, col);
+            framebuffer.DrawImage(x, y, image);
+        }*/
 
         int mx, my;
         SDL_GetMouseState(&mx, &my);

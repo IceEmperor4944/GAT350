@@ -1,5 +1,6 @@
 #pragma once
 #include "Light.h"
+#include "Material.h"
 #include <array>
 
 struct vertex_t {
@@ -29,6 +30,7 @@ public:
 		// lights
 		light_t light;
 		color3_t ambient;
+		material_t material;
 	};
 
 	static uniforms_t uniforms;
