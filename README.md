@@ -72,12 +72,12 @@ make
 - Lighting and material configurations can be adjusted via the provided settings interface.
 
 ## Screenshots
-![Sphere Rendered With Gouraud Lighting](GAT350/Screenshots/cgGouraudPoint.PNG)
-![Cube Rendered With Phong Lighting](GAT350/Screenshots/cgCubeSpecular.PNG)
-![Cube Drawn with Edge Detection](GAT350/Screenshots/cgFinalEdge.PNG)
-![Cube Drawn with Monochrome Filter](GAT350/Screenshots/cgFinalMonochrome.PNG)
-![Cube Drawn with Posterization](GAT350/Screenshots/cgFinalPosterize.PNG)
-![Scene Rendered with Multiple Materials and Objects](GAT350/Screenshots/cgRayTracerFinal.PNG)
+![Sphere Rendered With Gouraud Lighting](Screenshots/cgGouraudPoint.PNG)
+![Cube Rendered With Phong Lighting](Screenshots/cgCubeSpecular.PNG)
+![Cube Drawn with Edge Detection](Screenshots/cgFinalEdge.PNG)
+![Cube Drawn with Monochrome Filter](Screenshots/cgFinalMonochrome.PNG)
+![Cube Drawn with Posterization](Screenshots/cgFinalPosterize.PNG)
+![Scene Rendered with Multiple Materials and Objects](Screenshots/cgRayTracerFinal.PNG)
 
 ## Contributing
 
