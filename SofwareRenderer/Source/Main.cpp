@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     Camera camera(renderer.m_width, renderer.m_height);
     camera.SetView(glm::vec3{ 0, 0, -50 }, glm::vec3{ 0 });
     camera.SetProjection(90.0f, 800.0f / 600, 0.1f, 1000.0f);
-    Transform camTrans{ {0, 2, -3} };
+    Transform camTrans{ {0, 0, -3} };
 
     Framebuffer framebuffer(renderer, 800, 600);
     Image image;
@@ -62,8 +62,8 @@ int main(int argc, char* argv[]) {
     Shader::uniforms.projection = camera.GetProjection();
     Shader::uniforms.ambient = color3_t{ 0.01f };
 
-    Shader::uniforms.light.position = glm::vec3{ 10, 2, -5 };
-    Shader::uniforms.light.direction = glm::vec3{ 0, -1, 0 }; // light pointing down
+    Shader::uniforms.light.position = glm::vec3{ 10, 2, 5 };
+    //Shader::uniforms.light.direction = glm::vec3{ 0, -1, 0 }; // light pointing down
     Shader::uniforms.light.color = color3_t{ 1 }; // white light
 
     // materials
@@ -180,19 +180,8 @@ int main(int argc, char* argv[]) {
         //SetBlendMode(BlendMode::MULTIPLY);
         //framebuffer.DrawImage(mx - 100, my - 100, imageAlpha);
 
-        //PostProcess::Invert(framebuffer.m_buffer);
-        //PostProcess::Monochrome(framebuffer.m_buffer);
-        PostProcess::Brightness(framebuffer.m_buffer, -75);
-        //PostProcess::ColorBalance(framebuffer.m_buffer, 100, 100, -10);
-        //PostProcess::Noise(framebuffer.m_buffer, 10);
-        //PostProcess::Threshold(framebuffer.m_buffer, 150);
-        //PostProcess::Posterize(framebuffer.m_buffer, 10);
-        //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-        //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-        //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
-        //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 128);
-        //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
         
+
         if (input.GetMouseButtonDown(2)) {
             input.SetRelativeMode(true);
 
@@ -223,6 +212,19 @@ int main(int argc, char* argv[]) {
             //actor->GetTransform().rotation.y += time.GetDeltaTime() * 90;
             actor->Draw();
         }
+
+        //PostProcess::Invert(framebuffer.m_buffer);
+        //PostProcess::Monochrome(framebuffer.m_buffer);
+        //PostProcess::Brightness(framebuffer.m_buffer, -75);
+        //PostProcess::ColorBalance(framebuffer.m_buffer, 100, 100, -10);
+        //PostProcess::Noise(framebuffer.m_buffer, 10);
+        //PostProcess::Threshold(framebuffer.m_buffer, 150);
+        //PostProcess::Posterize(framebuffer.m_buffer, 10);
+        //PostProcess::BoxBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::GaussianBlur(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Sharpen(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
+        //PostProcess::Edge(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height, 128);
+        //PostProcess::Emboss(framebuffer.m_buffer, framebuffer.m_width, framebuffer.m_height);
 
         framebuffer.Update();
         renderer = framebuffer;
