@@ -28,16 +28,18 @@ Ensure you have these dependencies installed before proceeding.
 ```bash
 git clone <repository_url>
 cd <repository_directory>
+```
 
 ## Install Dependencies
 
 ### SDL2
 ```bash
 # For Linux
-sudo apt-get install libsdl2-dev       
+sudo apt-get install libsdl2-dev
 
 # For macOS
 brew install sdl2
+```
 
 ### GLM
 ```bash
@@ -46,6 +48,7 @@ sudo apt-get install libglm-dev
 
 # For macOS
 brew install glm
+```
 
 ## Build the Project
 
@@ -55,11 +58,13 @@ Ensure you have a C++ compiler that supports **C++17** or higher. Run the follow
 mkdir build && cd build
 cmake ..
 make
+```
 
 ## Run the Application
 
 ```bash
 ./RendererRayTracer
+```
 
 ## Usage
 
