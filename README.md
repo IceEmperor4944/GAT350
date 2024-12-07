@@ -87,10 +87,6 @@ Contributions are welcome! If you have ideas to enhance this project, feel free 
 2. Create a feature branch.
 3. Submit a pull request with detailed explanations.
 
-## License
-
-This project is licensed under the **MIT License**. See the `LICENSE` file for details.
-
 ## Acknowledgments
 
 - **SDL** and **GLM** for their robust libraries.
